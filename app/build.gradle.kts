@@ -4,16 +4,18 @@ plugins {
 
 android {
 
+    namespace = "com.revolhope.composeutilscore"
+
     applyAppDefaultConfig()
 
     applySigningConfig(
-            /*SigningData(
+            SigningData(
                     name = release,
-                    keystore = file("app_keystore.jks"),
-                    keystorePassword = "ComposeUtils25012022!:)*",
+                    keystore = file("app_release_keystore.jks"),
+                    keystorePassword = "ComposeUtilsCore02022022!:)*",
                     alias = "release_sign_key",
-                    password = "ComposeUtils25012022!:)*"
-            )*/
+                    password = "ComposeUtilsCore02022022!:)*"
+            )
     )
 
     applyAppFlavors()
