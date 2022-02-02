@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "ComposeUtils-Core"
+rootProject.name = "ComposeUtilsCore"
 include ':app'
 include ':core'
