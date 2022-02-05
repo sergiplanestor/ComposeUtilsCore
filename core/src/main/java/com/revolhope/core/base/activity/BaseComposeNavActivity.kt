@@ -15,13 +15,13 @@ import androidx.navigation.navArgument
 
 abstract class BaseComposeNavActivity : BaseComposeActivity() {
 
-    protected lateinit var navController: NavHostController
+    protected var navHostController: NavHostController? = null
     abstract val initNav: String
 
     @Composable
     override fun ScreenContent() {
         NavHost(
-            navController = rememberNavController().also { navController = it },
+            navController = rememberNavController().also { navHostController = it },
             startDestination = initNav
         ) {
             onCreateNavGraph()
