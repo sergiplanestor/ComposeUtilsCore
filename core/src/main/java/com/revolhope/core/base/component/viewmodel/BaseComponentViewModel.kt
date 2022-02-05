@@ -20,7 +20,7 @@ abstract class BaseComponentViewModel<M : UiComponentContract.UiModel, E : UiCom
     override val coroutineContext: CoroutineContext
         get() = Job() + Dispatchers.Main
 
-    private val uiStateAtStart: UiComponentContract.State<M> by lazy { initState() }
+    protected val uiStateAtStart: UiComponentContract.State<M> by lazy { UiComponentContract.State.Uninitialized() }
     private val uiStateMutableState: MutableState<UiComponentContract.State<M>> = mutableStateOf(uiStateAtStart)
     private val uiEventMutableSharedFlow: MutableSharedFlow<E> = MutableSharedFlow()
     private val uiSideEffectChannel: Channel<SE> = Channel()
@@ -33,7 +33,6 @@ abstract class BaseComponentViewModel<M : UiComponentContract.UiModel, E : UiCom
         onSubscribeUiEvents()
     }
 
-    abstract fun initState(): UiComponentContract.State<M>
     abstract fun onUiEventHandled(uiEvent: E)
 
     fun onUiEvent(uiEvent: E) {

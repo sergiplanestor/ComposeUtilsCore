@@ -12,6 +12,8 @@ sealed interface UiComponentContract {
     }
 
     sealed class State<out T : UiModel> {
+        class Uninitialized<out T : UiModel> : State<T>()
+
         data class Ready<out T : UiModel>(val data: T) : State<T>()
 
         data class Loading<out T : UiModel>(

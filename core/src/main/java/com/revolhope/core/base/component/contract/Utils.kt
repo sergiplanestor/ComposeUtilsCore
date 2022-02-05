@@ -15,10 +15,11 @@ val defaultSideEffectsHandlerKey by lazy { "default-side-effects-handler" }
 @Composable
 fun <Effect : UiComponentContract.SideEffect> HandleSideEffects(
     uiSideEffectFlow: Flow<Effect>?,
+    handlerKey: String = defaultSideEffectsHandlerKey,
     onSideEffect: (UiComponentContract.SideEffect.Effect) -> Unit = {},
     onNavRequest: (UiComponentContract.SideEffect.Navigation) -> Unit = {}
 ) {
-    LaunchedEffect(defaultSideEffectsHandlerKey) {
+    LaunchedEffect(handlerKey) {
         uiSideEffectFlow?.onEach { effect ->
             when (effect) {
                 is UiComponentContract.SideEffect.Effect -> onSideEffect(effect)
