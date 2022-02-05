@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.revolhope.core.base.component.contract.UiEvent
+import com.revolhope.core.base.component.contract.UiModel
 import com.revolhope.core.base.component.contract.UiSideEffect
 import com.revolhope.core.base.component.contract.UiState
 import kotlinx.coroutines.CoroutineScope
@@ -16,18 +17,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseComponentViewModel<T, E : UiEvent, SE : UiSideEffect> :
+abstract class BaseComponentViewModel<M : UiModel, E : UiEvent, SE : UiSideEffect> :
     ViewModel(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Job() + Dispatchers.Main
 
-    private val uiStateAtStart: UiState<T> by lazy { initState() }
-    private val uiStateMutableState: MutableState<UiState<T>> = mutableStateOf(uiStateAtStart)
+    private val uiStateAtStart: UiState<M> by lazy { initState() }
+    private val uiStateMutableState: MutableState<UiState<M>> = mutableStateOf(uiStateAtStart)
     private val uiEventMutableSharedFlow: MutableSharedFlow<E> = MutableSharedFlow()
     private val uiSideEffectChannel: Channel<SE> = Channel()
 
-    val uiState: State<UiState<T>> get() = uiStateMutableState
+    val uiState: State<UiState<M>> get() = uiStateMutableState
     val uiSideEffect: Flow<SE> get() = uiSideEffectChannel.receiveAsFlow()
 
 
@@ -35,14 +36,14 @@ abstract class BaseComponentViewModel<T, E : UiEvent, SE : UiSideEffect> :
         onSubscribeUiEvents()
     }
 
-    abstract fun initState(): UiState<T>
+    abstract fun initState(): UiState<M>
     abstract fun onUiEventHandled(uiEvent: E)
 
     fun onUiEvent(uiEvent: E) {
         emit(uiEventMutableSharedFlow, uiEvent)
     }
 
-    protected fun updateUiState(update: (fromUiState: UiState<T>) -> UiState<T>) {
+    protected fun updateUiState(update: (fromUiState: UiState<M>) -> UiState<M>) {
         uiStateMutableState.value = update(uiState.value)
     }
 

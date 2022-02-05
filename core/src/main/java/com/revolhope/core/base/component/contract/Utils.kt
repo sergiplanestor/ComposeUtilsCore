@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
+typealias UiModel = UiComponentContract.UiModel
 typealias UiEvent = UiComponentContract.Event
 typealias UiState<T> = UiComponentContract.State<T>
 typealias UiSideEffect = UiComponentContract.SideEffect
