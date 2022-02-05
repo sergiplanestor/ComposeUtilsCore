@@ -6,18 +6,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
-typealias UiModel = UiComponentContract.UiModel
-typealias UiEvent = UiComponentContract.Event
-typealias UiState<T> = UiComponentContract.State<T>
-typealias UiSideEffect = UiComponentContract.SideEffect
 
-object EmptyUiEvent: UiEvent
-object EmptyUiSideEffect: UiSideEffect
+object EmptyUiEvent: UiComponentContract.Event
+object EmptyUiSideEffect: UiComponentContract.SideEffect
 
 val defaultSideEffectsHandlerKey by lazy { "default-side-effects-handler" }
 
 @Composable
-fun <Effect : UiSideEffect> HandleSideEffects(
+fun <Effect : UiComponentContract.SideEffect> HandleSideEffects(
     uiSideEffectFlow: Flow<Effect>?,
     onSideEffect: (UiComponentContract.SideEffect.Effect) -> Unit = {},
     onNavRequest: (UiComponentContract.SideEffect.Navigation) -> Unit = {}

@@ -4,10 +4,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.revolhope.core.base.component.contract.UiEvent
-import com.revolhope.core.base.component.contract.UiModel
-import com.revolhope.core.base.component.contract.UiSideEffect
-import com.revolhope.core.base.component.contract.UiState
+import com.revolhope.core.base.component.contract.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,18 +14,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseComponentViewModel<M : UiModel, E : UiEvent, SE : UiSideEffect> :
+abstract class BaseComponentViewModel<M : UiComponentContract.UiModel, E : UiComponentContract.Event, SE : UiComponentContract.SideEffect> :
     ViewModel(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Job() + Dispatchers.Main
 
-    private val uiStateAtStart: UiState<M> by lazy { initState() }
-    private val uiStateMutableState: MutableState<UiState<M>> = mutableStateOf(uiStateAtStart)
+    private val uiStateAtStart: UiComponentContract.State<M> by lazy { initState() }
+    private val uiStateMutableState: MutableState<UiComponentContract.State<M>> = mutableStateOf(uiStateAtStart)
     private val uiEventMutableSharedFlow: MutableSharedFlow<E> = MutableSharedFlow()
     private val uiSideEffectChannel: Channel<SE> = Channel()
 
-    val uiState: State<UiState<M>> get() = uiStateMutableState
+    val uiState: State<UiComponentContract.State<M>> get() = uiStateMutableState
     val uiSideEffect: Flow<SE> get() = uiSideEffectChannel.receiveAsFlow()
 
 
@@ -36,14 +33,14 @@ abstract class BaseComponentViewModel<M : UiModel, E : UiEvent, SE : UiSideEffec
         onSubscribeUiEvents()
     }
 
-    abstract fun initState(): UiState<M>
+    abstract fun initState(): UiComponentContract.State<M>
     abstract fun onUiEventHandled(uiEvent: E)
 
     fun onUiEvent(uiEvent: E) {
         emit(uiEventMutableSharedFlow, uiEvent)
     }
 
-    protected fun updateUiState(update: (fromUiState: UiState<M>) -> UiState<M>) {
+    protected fun updateUiState(update: (fromUiState: UiComponentContract.State<M>) -> UiComponentContract.State<M>) {
         uiStateMutableState.value = update(uiState.value)
     }
 
