@@ -16,18 +16,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlin.coroutines.CoroutineContext
 
-abstract class BaseComponentViewModel<T, E : UiEvent, S : UiState<T>, SE : UiSideEffect> :
+abstract class BaseComponentViewModel<T, E : UiEvent, SE : UiSideEffect> :
     ViewModel(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext
         get() = Job() + Dispatchers.Main
 
-    private val uiStateAtStart: S by lazy { initState() }
-    private val uiStateMutableState: MutableState<S> = mutableStateOf(uiStateAtStart)
+    private val uiStateAtStart: UiState<T> by lazy { initState() }
+    private val uiStateMutableState: MutableState<UiState<T>> = mutableStateOf(uiStateAtStart)
     private val uiEventMutableSharedFlow: MutableSharedFlow<E> = MutableSharedFlow()
     private val uiSideEffectChannel: Channel<SE> = Channel()
 
-    val uiState: State<S> get() = uiStateMutableState
+    val uiState: State<UiState<T>> get() = uiStateMutableState
     val uiSideEffect: Flow<SE> get() = uiSideEffectChannel.receiveAsFlow()
 
 
@@ -35,14 +35,14 @@ abstract class BaseComponentViewModel<T, E : UiEvent, S : UiState<T>, SE : UiSid
         onSubscribeUiEvents()
     }
 
-    abstract fun initState(): S
+    abstract fun initState(): UiState<T>
     abstract fun onUiEventHandled(uiEvent: E)
 
     fun onUiEvent(uiEvent: E) {
         emit(uiEventMutableSharedFlow, uiEvent)
     }
 
-    protected fun updateUiState(update: (fromUiState: S) -> S) {
+    protected fun updateUiState(update: (fromUiState: UiState<T>) -> UiState<T>) {
         uiStateMutableState.value = update(uiState.value)
     }
 
